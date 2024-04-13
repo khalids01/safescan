@@ -4,7 +4,8 @@
     "strict": true,
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@img/*": ["assets/images/*"],
     }
   },
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]

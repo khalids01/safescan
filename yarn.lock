@@ -7153,6 +7153,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-image@npm:~1.10.6":
+  version: 1.10.6
+  resolution: "expo-image@npm:1.10.6"
+  dependencies:
+    "@react-native/assets-registry": "npm:~0.73.1"
+  peerDependencies:
+    expo: "*"
+  checksum: 6eefcb9c9fba711fd7ad1cb87ef0b97c8b6edab7c2af708fd67db3dc5a7588c18bbecddc98e5e1c9738d571b834cd86aacd7c7283c71e332551029cb1cd758d4
+  languageName: node
+  linkType: hard
+
 "expo-keep-awake@npm:~12.8.2":
   version: 12.8.2
   resolution: "expo-keep-awake@npm:12.8.2"
@@ -11433,6 +11444,7 @@ __metadata:
     babel-preset-expo: "npm:^10.0.1"
     expo: "npm:~50.0.6"
     expo-font: "npm:~11.10.2"
+    expo-image: "npm:~1.10.6"
     expo-linking: "npm:~6.2.1"
     expo-router: "npm:~3.4.7"
     expo-splash-screen: "npm:~0.26.4"
