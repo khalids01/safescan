@@ -12,7 +12,7 @@ export const useFirstLoad = create<FirstLoad>()(
   persist(
     (set) => ({
       data: {
-        firstLoad: true,
+        firstLoad: false,
       },
       setFirstLoad: (value) => set((state) => ({ data: { firstLoad: value } })),
     }),

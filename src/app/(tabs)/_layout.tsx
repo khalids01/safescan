@@ -1,4 +1,4 @@
-import { Link, Tabs } from "expo-router";
+import { Link, Tabs,  } from "expo-router";
 import { Pressable } from "react-native";
 import { Text } from "tamagui";
 
@@ -23,13 +23,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="two"
-        options={{
-          title: "Tab Two",
-          tabBarIcon: ({ color }) => <Text>Hello!</Text>,
-        }}
-      />
+    
     </Tabs>
   );
 }
