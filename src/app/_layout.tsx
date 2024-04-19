@@ -30,7 +30,9 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [interLoaded, interError] = useFonts({
-    Inter: require("@tamagui/font-inter/otf/Inter-Medium.otf"),
+    Inter: require("@tamagui/font-inter/otf/Inter-Regular.otf"),
+    InterMedium: require("@tamagui/font-inter/otf/Inter-Medium.otf"),
+    InterSemibold: require("@tamagui/font-inter/otf/Inter-SemiBold.otf"),
     InterBold: require("@tamagui/font-inter/otf/Inter-Bold.otf"),
   });
 
@@ -62,7 +64,10 @@ function RootLayoutNav() {
     <TamaguiProvider config={config} defaultTheme={colorScheme as any}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
-          <Stack.Screen name="welcome" options={{ presentation: "modal", headerShown: false }} />
+          <Stack.Screen
+            name="welcome"
+            options={{ presentation: "modal", headerShown: false }}
+          />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
       </ThemeProvider>
