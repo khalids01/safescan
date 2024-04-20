@@ -1,4 +1,4 @@
-import { View, Text, Button, XStack } from "tamagui";
+import { View, Text, Button, XStack, YStack } from "tamagui";
 import { Camera, CameraType } from "expo-camera";
 import { useEffect, useRef, useState } from "react";
 import { SafeAreaView, StyleSheet, TouchableOpacity } from "react-native";
@@ -9,7 +9,13 @@ import Icon from "@expo/vector-icons/MaterialIcons";
 import { Image } from "expo-image";
 import colors from "constants/colors";
 
-function Header({ toggleCamera, toggleFlash }: { toggleCamera: () => void, toggleFlash: () => void  }) {
+function Header({
+  toggleCamera,
+  toggleFlash,
+}: {
+  toggleCamera: () => void;
+  toggleFlash: () => void;
+}) {
   const items = [
     {
       icon: "collections",
@@ -52,7 +58,7 @@ function Header({ toggleCamera, toggleFlash }: { toggleCamera: () => void, toggl
 }
 
 const scanSize = 50;
-function Footer() {
+function Footer({ takePicture }: { takePicture: () => void }) {
   const links = [
     { label: "Home", href: "/", icon: "home", size: 30 },
     {
@@ -62,7 +68,7 @@ function Footer() {
       type: "svg",
       size: scanSize,
       onClick: () => {
-        router.push("/scan");
+        takePicture();
       },
     },
     { label: "Home", href: "/", icon: "history", size: 30 },
@@ -104,11 +110,15 @@ function Footer() {
 const Scan = () => {
   const [type, setType] = useState(CameraType.back);
   const [hasPermission, setHasPermission] = useState(false);
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState<{
+    height: number;
+    width: number;
+    uri: string;
+  } | null>(null);
   //   @ts-ignore
   const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
 
-  const cameraRef = useRef(null);
+  const cameraRef = useRef<Camera | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -130,10 +140,29 @@ const Scan = () => {
     setFlash((current: any) =>
       // @ts-ignore
       current === Camera.Constants.FlashMode.off
-      // @ts-ignore
-        ? Camera.Constants.FlashMode.on
-      // @ts-ignore
-        : Camera.Constants.FlashMode.off
+        ? // @ts-ignore
+          Camera.Constants.FlashMode.on
+        : // @ts-ignore
+          Camera.Constants.FlashMode.off
+    );
+  }
+
+  const takePicture = async () => {
+    if (!!cameraRef) {
+      try {
+        const data = await cameraRef?.current?.takePictureAsync();
+        setImage(data!);
+      } catch (error) {
+        console.log("Camera Take Picture error: ", error);
+      }
+    }
+  };
+
+  if (!hasPermission) {
+    return (
+      <YStack flex={1}>
+        <Text>No Access to Camera</Text>
+      </YStack>
     );
   }
 
@@ -141,14 +170,28 @@ const Scan = () => {
     <SafeAreaView style={{ flex: 1, position: "relative" }}>
       <View style={styles.container}>
         <Header toggleFlash={toggleFlash} toggleCamera={toggleCamera} />
-        <Camera
-          ref={cameraRef}
-          focusable
-          flashMode={flash}
-          style={styles.camera}
-          type={type}
-        />
-        <Footer />
+        {!!image?.uri ? (
+          <XStack justifyContent="center">
+            <Image
+              style={{
+                height: image.height,
+                width: image.width,
+                maxHeight: "100%",
+                maxWidth: "100%",
+              }}
+              source={image.uri}
+            />
+          </XStack>
+        ) : (
+          <Camera
+            ref={cameraRef}
+            focusable
+            flashMode={flash}
+            style={styles.camera}
+            type={type}
+          ></Camera>
+        )}
+        <Footer takePicture={takePicture} />
       </View>
     </SafeAreaView>
   );
