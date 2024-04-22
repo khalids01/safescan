@@ -1,9 +1,9 @@
 import { View, Text, Button, XStack, YStack } from "tamagui";
 import { Camera, CameraType } from "expo-camera";
 import { useEffect, useRef, useState } from "react";
-import { SafeAreaView, StyleSheet, TouchableOpacity } from "react-native";
+import { SafeAreaView, StyleSheet } from "react-native";
 import * as MediaLibrary from "expo-media-library";
-import { router, usePathname, Link, Navigator, Slot } from "expo-router";
+import { Link } from "expo-router";
 import { Fragment } from "react";
 import Icon from "@expo/vector-icons/MaterialIcons";
 import { Image } from "expo-image";
@@ -58,17 +58,37 @@ function Header({
 }
 
 const scanSize = 50;
-function Footer({ takePicture }: { takePicture: () => void }) {
+function Footer({
+  takePicture,
+  clearImage,
+  image = undefined,
+}: {
+  takePicture: () => void;
+  clearImage: () => void;
+  image?: string;
+}) {
   const links = [
     { label: "Home", href: "/", icon: "home", size: 30 },
     {
       label: "Scan",
-      href: "/",
       icon: require("../../assets/images/icon-no-bg.svg"),
       type: "svg",
       size: scanSize,
+      href: "",
+      show: !image,
       onClick: () => {
         takePicture();
+      },
+    },
+    {
+      label: "Scan",
+      href: "",
+      icon: "close",
+      type: "icon",
+      size: 40,
+      show: !!image && image?.toString().length > 0,
+      onClick: () => {
+        clearImage();
       },
     },
     { label: "Home", href: "/", icon: "history", size: 30 },
@@ -79,19 +99,7 @@ function Footer({ takePicture }: { takePicture: () => void }) {
       <XStack style={styles.footer} backgroundColor={colors.darkBg}>
         {links.map((item, i) => (
           <Fragment key={i}>
-            {item.type === "svg" ? (
-              <Button
-                onPress={item.onClick}
-                style={styles.scanBtn}
-                borderColor={colors.primary}
-              >
-                <Image
-                  source={item.icon}
-                  style={{ width: item.size, height: item.size }}
-                  contentFit={"contain"}
-                />
-              </Button>
-            ) : (
+            {String(item?.href)?.length > 0 ? (
               <Link href={item.href as any}>
                 <Icon
                   color={"white"}
@@ -99,6 +107,30 @@ function Footer({ takePicture }: { takePicture: () => void }) {
                   size={item.size}
                 />
               </Link>
+            ) : (
+              <>
+                {item?.show && (
+                  <Button
+                    onPress={item.onClick}
+                    style={styles.scanBtn}
+                    borderColor={colors.primary}
+                  >
+                    {item.type === "svg" ? (
+                      <Image
+                        source={item.icon}
+                        style={{ width: item.size, height: item.size }}
+                        contentFit={"contain"}
+                      />
+                    ) : (
+                      <Icon
+                        style={{ marginLeft: 3, marginTop: 3 }}
+                        name={item.icon as any}
+                        size={item.size}
+                      />
+                    )}
+                  </Button>
+                )}
+              </>
             )}
           </Fragment>
         ))}
@@ -160,7 +192,7 @@ const Scan = () => {
 
   if (!hasPermission) {
     return (
-      <YStack flex={1}>
+      <YStack flex={1} alignItems="center" justifyContent="center">
         <Text>No Access to Camera</Text>
       </YStack>
     );
@@ -191,7 +223,11 @@ const Scan = () => {
             type={type}
           ></Camera>
         )}
-        <Footer takePicture={takePicture} />
+        <Footer
+          image={image?.uri}
+          clearImage={() => setImage(null)}
+          takePicture={takePicture}
+        />
       </View>
     </SafeAreaView>
   );
